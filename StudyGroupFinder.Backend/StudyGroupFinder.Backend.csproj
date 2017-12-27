@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
+    <Folder Include="Security\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,4 +18,7 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudyGroupFinder.Common\StudyGroupFinder.Common.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 
-namespace StudyGroupFinder.Backend.Utilities
+namespace StudyGroupFinder.API.Utilities
 {
     public static class HttpContextExtensions
     {

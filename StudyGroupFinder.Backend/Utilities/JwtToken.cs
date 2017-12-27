@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json;
 
-namespace StudyGroupFinder.Backend.Utilities
+namespace StudyGroupFinder.API.Utilities
 {
     public sealed class JwtToken
     {

@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace StudyGroupFinder.Backend.Utilities
+namespace StudyGroupFinder.API.Utilities
 {
     public static class JwtHandler
     {

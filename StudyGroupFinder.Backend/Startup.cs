@@ -10,12 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using StudyGroupFinder.Backend.Utilities;
+using StudyGroupFinder.API.Utilities;
 using StudyGroupFinder.Data;
 using StudyGroupFinder.Data.Repositories;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace StudyGroupFinder.Backend
+namespace StudyGroupFinder.API
 {
     public class Startup
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StudyGroupFinder.Backend.Utilities
+namespace StudyGroupFinder.API.Utilities
 {
     public class JwtOptions
     {

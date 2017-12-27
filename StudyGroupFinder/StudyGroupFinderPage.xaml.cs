@@ -10,21 +10,16 @@ namespace StudyGroupFinder
             Detail = new NavigationPage(new Account());
             IsPresented = false;
         }
+        void Handle_Clicked_Login(object sender, System.EventArgs e)
+        {
+            Detail = new NavigationPage(new LoginPage());
+            IsPresented = false;
+        }
 
-        void Handle_Clicked(object sender, System.EventArgs e)
+        void Handle_Clicked_Account(object sender, System.EventArgs e)
         {
             Detail = new NavigationPage(new Account());
             IsPresented = false;
-
-
-        }
-
-        void Handle_Clicked2(object sender, System.EventArgs e)
-        {
-            Detail = new NavigationPage(new Page2());
-            IsPresented = false;
-
-
         }
     }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns ="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="StudyGroupFinder.LoginPage"
+    Title  ="Login">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Text   ="Sign Up"
+            Clicked="Handle_Clicked_SignUp">
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout>
+            <Image
+                Source           ="uci256.png"
+                HorizontalOptions="Center"
+                VerticalOptions  ="CenterAndExpand">
+            </Image>
+            <Entry
+                Placeholder      ="Username"
+                TextColor        ="Black"
+                HorizontalOptions="Center"
+                VerticalOptions  ="CenterAndExpand">
+            </Entry>
+            <Entry
+                Placeholder      ="Password"
+                IsPassword       ="true"
+                TextColor        ="Black"
+                HorizontalOptions="Center"
+                VerticalOptions  ="CenterAndExpand">
+            </Entry>
+            <Button
+                Text             ="Login"
+                HorizontalOptions="Center"
+                VerticalOptions  ="CenterAndExpand">
+            </Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -5,9 +5,9 @@ using Xamarin.Forms;
 
 namespace StudyGroupFinder
 {
-    public partial class Page2 : ContentPage
+    public partial class SignUpPage : ContentPage
     {
-        public Page2()
+        public SignUpPage()
         {
             InitializeComponent();
         }

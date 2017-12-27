@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StudyGroupFinder.Backend.Utilities;
+using StudyGroupFinder.Data;
+using StudyGroupFinder.Data.Repositories;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace StudyGroupFinder.Backend
@@ -51,7 +53,12 @@ namespace StudyGroupFinder.Backend
                             IssuerSigningKey = JwtHandler.CreateSigningKey(Configuration["JwtSecurity:SecretKey"])
                         };
                     });
-			#endregion
+            #endregion
+
+            #region Dependency Injection
+            services.AddTransient<DatabaseProvider>();
+            services.AddTransient<UsersRepository>();
+            #endregion
 
             services.AddMvc();
         }

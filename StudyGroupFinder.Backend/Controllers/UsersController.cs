@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using StudyGroupFinder.Backend.Security;
 using StudyGroupFinder.Backend.Utilities;
+using StudyGroupFinder.Common.Models;
 using StudyGroupFinder.Common.Requests;
 using StudyGroupFinder.Common.Responses;
+using StudyGroupFinder.Data.Repositories;
 
 namespace StudyGroupFinder.Backend.Controllers
 {
@@ -22,10 +23,12 @@ namespace StudyGroupFinder.Backend.Controllers
     public class UsersController : Controller
     {
         private IConfiguration _configuration;
+        private UsersRepository _usersRepository;
 
-        public UsersController(IConfiguration configuration)
+        public UsersController(IConfiguration configuration, UsersRepository usersRepository)
         {
             _configuration = configuration;
+            _usersRepository = usersRepository;
         }
 
         #region POST api/users/signup
@@ -51,6 +54,8 @@ namespace StudyGroupFinder.Backend.Controllers
 
                 HttpContext.Response.Headers.Add("ACCESS-TOKEN", token.Token);
                 HttpContext.Response.Headers.Add("ACCESS-TOKEN-EXPIRATION", token.ValidTo.ToString());
+
+                await _usersRepository.Create(new User());
 
                 response.Success = true;
                 response.Message = "User successfully created!";
@@ -132,10 +137,22 @@ namespace StudyGroupFinder.Backend.Controllers
         #region GET api/users
 
         [HttpGet]
-        public string Get()
+        public async Task<List<Object>> Get()
         {
+            var users = new List<Object>();
 
-            return HttpContext.User.FindFirstValue("jti") ?? "Logged In";
+            try
+            {
+                users = await _usersRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                //response.Message = "Failed to create user.";
+            }
+
+            return users;
         }
         #endregion
 

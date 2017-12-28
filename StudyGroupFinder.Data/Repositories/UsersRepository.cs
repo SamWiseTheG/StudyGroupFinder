@@ -17,10 +17,12 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
+                var random = new Random();
+                var number = random.Next();
                 return (await conn.ExecuteAsync(@"
-                    INSERT INTO Students(student_id, student_fname, student_lname)
-                    VALUES (6, 'firstName', 'lastName');",
-                    user)) > 0;
+                    INSERT INTO Students(student_username, student_password, student_email)
+                    VALUES (@x, @x, @x);",
+                    new { x = number.ToString() })) > 0;
             }
         }
         #endregion

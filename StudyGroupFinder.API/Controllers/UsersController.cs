@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using StudyGroupFinder.Backend.Utilities;
+using StudyGroupFinder.API.Utilities;
 using StudyGroupFinder.Common.Models;
 using StudyGroupFinder.Common.Requests;
 using StudyGroupFinder.Common.Responses;
 using StudyGroupFinder.Data.Repositories;
 
-namespace StudyGroupFinder.Backend.Controllers
+namespace StudyGroupFinder.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]

@@ -4,12 +4,16 @@ USE StudyGroup;
 
 DROP TABLE IF EXISTS Students;
 CREATE TABLE Students (
-  student_id int NOT NULL,
+  student_id int NOT NULL AUTO_INCREMENT,
+  student_username varchar(50) NOT NULL,
+  student_password varchar(50) NOT NULL,
+  student_email varchar(50) NOT NULL,
   student_fname varchar(30) DEFAULT NULL,
   student_lname varchar(30) DEFAULT NULL,
   student_major varchar(30) DEFAULT NULL,  
   student_phone varchar(11) DEFAULT NULL,
-  student_email varchar(50) DEFAULT NULL,
+  UNIQUE(student_username),
+  UNIQUE(student_email),
   PRIMARY KEY (student_id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

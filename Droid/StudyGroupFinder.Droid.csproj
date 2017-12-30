@@ -112,6 +112,10 @@
       <Project>{E90FA63A-62C2-44C6-9663-1C636EC76A67}</Project>
       <Name>StudyGroupFinder</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StudyGroupFinder.Common\StudyGroupFinder.Common.csproj">
+      <Project>{7C725636-8A9B-4C3B-8E3A-4B52662E990D}</Project>
+      <Name>StudyGroupFinder.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

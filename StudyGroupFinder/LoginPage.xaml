@@ -18,12 +18,14 @@
                 VerticalOptions  ="CenterAndExpand">
             </Image>
             <Entry
+                x:Name           ="usernameEntry"
                 Placeholder      ="Username"
                 TextColor        ="Black"
                 HorizontalOptions="Center"
                 VerticalOptions  ="CenterAndExpand">
             </Entry>
             <Entry
+                x:Name           ="passwordEntry"
                 Placeholder      ="Password"
                 IsPassword       ="true"
                 TextColor        ="Black"
@@ -33,7 +35,8 @@
             <Button
                 Text             ="Login"
                 HorizontalOptions="Center"
-                VerticalOptions  ="CenterAndExpand">
+                VerticalOptions  ="CenterAndExpand"
+                Clicked          ="Handle_Clicked_Login">
             </Button>
         </StackLayout>
     </ContentPage.Content>

@@ -16,6 +16,7 @@ using StudyGroupFinder.Common.Requests;
 using StudyGroupFinder.Common.Responses;
 using StudyGroupFinder.Data.Repositories;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 
 namespace StudyGroupFinder.API.Controllers
 {
@@ -49,11 +50,13 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
-                // TODO: hash password.
+                var sha1 = new SHA1CryptoServiceProvider();
+                var hashedString = sha1.ComputeHash(Encoding.ASCII.GetBytes(request.Username.ToLower() + request.Password)).ToString();
+
                 var user = new User
                 {
                     Email = request.Email,
-                    Password = request.Password,
+                    Password = hashedString,
                     Username = request.Username.ToLower(),
                     Fname = request.Fname,
                     Lname = request.Lname
@@ -108,7 +111,11 @@ namespace StudyGroupFinder.API.Controllers
             try
             {
                 var user = await _usersRepository.GetByUsername(request.Username.ToLower());
-                if (user == null || request.Password != user.Password)
+
+                var sha1 = new SHA1CryptoServiceProvider();
+                var hashedString = sha1.ComputeHash(Encoding.ASCII.GetBytes(request.Username.ToLower() + request.Password)).ToString();
+
+                if (user == null || hashedString != user.Password)
                 {
                     HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     response.Message = "Unauthorized.";

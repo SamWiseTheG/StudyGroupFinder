@@ -13,6 +13,7 @@ namespace StudyGroupFinder
         public SignUpPage()
         {
             InitializeComponent();
+            
         }
 
         async void Handle_Clicked_signUp(object sender, System.EventArgs e)

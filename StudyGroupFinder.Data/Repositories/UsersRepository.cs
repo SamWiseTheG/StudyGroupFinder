@@ -17,12 +17,10 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                var random = new Random();
-                var number = random.Next();
                 return (await conn.ExecuteAsync(@"
                     INSERT INTO Students(student_username, student_password, student_email)
-                    VALUES (@x, @x, @x);",
-                    new { x = number.ToString() })) > 0;
+                    VALUES (@Username, @Password, @Email);",
+                    user)) > 0;
             }
         }
         #endregion
@@ -41,9 +39,22 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.QuerySingleOrDefaultAsync(@"
+                return await conn.QuerySingleOrDefaultAsync<User>(@"
                     SELECT * FROM `Students` WHERE Id = @Id", 
                     new { Id = id });
+            }
+        }
+
+        public async Task<User> GetByUsername(string username)
+        {
+            using (var conn = await _db.GetSqlConnection())
+            {
+                var a = await conn.QuerySingleOrDefaultAsync<User>(@"
+                    SELECT * FROM `Students` WHERE student_username = @Username",
+                    new { Username = username });
+
+                var b = "";
+                return new User();
             }
         }
         #endregion

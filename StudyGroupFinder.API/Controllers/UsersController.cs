@@ -15,6 +15,7 @@ using StudyGroupFinder.Common.Models;
 using StudyGroupFinder.Common.Requests;
 using StudyGroupFinder.Common.Responses;
 using StudyGroupFinder.Data.Repositories;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudyGroupFinder.API.Controllers
 {
@@ -39,30 +40,50 @@ namespace StudyGroupFinder.API.Controllers
         {
             var response = new BaseResponse();
 
+            if (request == null || !ModelState.IsValid)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                response.Message = "Invalid input(s).";
+                return response;
+            }
+
             try
             {
-                var token = JwtHandler.GenerateToken(new JwtOptions
+                var user = new User
                 {
-                    Issuer = _configuration["JwtSecurity:Issuer"],
-                    Audience = _configuration["JwtSecurity:Audience"],
-                    SecretKey = _configuration["JwtSecurity:SecretKey"],
-                    PublicClaims = new Dictionary<string, string>()
+                    Email = request.Email,
+                    Password = request.Password,
+                    Username = request.Username
+                };
+
+                if (await _usersRepository.Create(user))
+                {
+                    var token = JwtHandler.GenerateToken(new JwtOptions
                     {
-                        { nameof(request.Username).ToLower(), request.Username},
-                    }
-                });
+                        Issuer = _configuration["JwtSecurity:Issuer"],
+                        Audience = _configuration["JwtSecurity:Audience"],
+                        SecretKey = _configuration["JwtSecurity:SecretKey"],
+                        PublicClaims = new Dictionary<string, string>()
+                        {
+                            { nameof(request.Username).ToLower(), request.Username},
+                        },
 
-                HttpContext.Response.Headers.Add("ACCESS-TOKEN", token.Token);
-                HttpContext.Response.Headers.Add("ACCESS-TOKEN-EXPIRATION", token.ValidTo.ToString());
+                    });
 
-                await _usersRepository.Create(new User());
+                    HttpContext.Response.Headers.Add("ACCESS-TOKEN", token.Token);
+                    HttpContext.Response.Headers.Add("ACCESS-TOKEN-EXPIRATION", token.ValidTo.ToString());
 
-                response.Success = true;
-                response.Message = "User successfully created!";
+                    response.Success = true;
+                    response.Message = "User successfully created!";
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception ex)
             {
-				Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
                 HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 response.Message = "Failed to create user.";
             }
@@ -81,6 +102,14 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
+                var user = await _usersRepository.GetByUsername(request.Username);
+                if (user == null || request.Password != user.Password)
+                {
+                    HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    response.Message = "Unauthorized.";
+                    return response;
+                }
+
                 var token = JwtHandler.GenerateToken(new JwtOptions
                 {
                     Issuer = _configuration["JwtSecurity:Issuer"],

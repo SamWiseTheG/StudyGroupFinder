@@ -12,7 +12,7 @@ namespace StudyGroupFinder.API.Utilities
         #endregion
 
         #region Set Optionally
-        public Guid Id { get; set; } = Guid.NewGuid();           
+        public int Id { get; set; }           
 		public string Subject { get; set; } = "Default";
         public Dictionary<string, string> PublicClaims = new Dictionary<string, string>();
         public int ExpiryInMinutes { get; set; } = 1;

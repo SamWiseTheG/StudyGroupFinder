@@ -49,15 +49,19 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
+                // TODO: hash password.
                 var user = new User
                 {
                     Email = request.Email,
                     Password = request.Password,
-                    Username = request.Username
+                    Username = request.Username.ToLower(),
+                    Fname = request.Fname,
+                    Lname = request.Lname
                 };
 
                 if (await _usersRepository.Create(user))
                 {
+                    var createdUser = await _usersRepository.GetByUsername(user.Username);
                     var token = JwtHandler.GenerateToken(new JwtOptions
                     {
                         Issuer = _configuration["JwtSecurity:Issuer"],
@@ -65,9 +69,11 @@ namespace StudyGroupFinder.API.Controllers
                         SecretKey = _configuration["JwtSecurity:SecretKey"],
                         PublicClaims = new Dictionary<string, string>()
                         {
-                            { nameof(request.Username).ToLower(), request.Username},
+                            { nameof(user.Username).ToLower(), user.Username},
+                            { nameof(user.Email).ToLower(), user.Email},
                         },
-
+                        Id = createdUser.Id,
+                        Subject = "Authorization"
                     });
 
                     HttpContext.Response.Headers.Add("ACCESS-TOKEN", token.Token);
@@ -102,7 +108,7 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
-                var user = await _usersRepository.GetByUsername(request.Username);
+                var user = await _usersRepository.GetByUsername(request.Username.ToLower());
                 if (user == null || request.Password != user.Password)
                 {
                     HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -117,7 +123,11 @@ namespace StudyGroupFinder.API.Controllers
                     SecretKey = _configuration["JwtSecurity:SecretKey"],
                     PublicClaims = new Dictionary<string, string>()
                     {
-                    }
+                        { nameof(user.Username).ToLower(), user.Username},
+                        { nameof(user.Email).ToLower(), user.Email},
+                    },
+                    Id = user.Id,
+                    Subject = "Authorization"
                 });
 
                 HttpContext.Response.Headers.Add("ACCESS-TOKEN", token.Token);
@@ -140,7 +150,7 @@ namespace StudyGroupFinder.API.Controllers
         #region PUT api/users/logout
 
         [HttpPut("logout")]
-        public async Task<BaseResponse> Logout()
+        public BaseResponse Logout()
         {
             var response = new BaseResponse();
 
@@ -165,20 +175,23 @@ namespace StudyGroupFinder.API.Controllers
 
         #region GET api/users
 
+        /// <summary>
+        /// Get logged in user's information.
+        /// </summary>
+        /// <returns>The user's information.</returns>
         [HttpGet]
-        public async Task<List<Object>> Get()
+        public async Task<User> Get()
         {
-            var users = new List<Object>();
+            var users = (User)null;
 
             try
             {
-                users = await _usersRepository.GetAll();
+                users = await _usersRepository.GetByUsername(HttpContext.User.GetUserUsername());
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                //response.Message = "Failed to create user.";
             }
 
             return users;

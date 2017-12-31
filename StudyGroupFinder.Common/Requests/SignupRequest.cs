@@ -14,5 +14,11 @@ namespace StudyGroupFinder.Common.Requests
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        public string Fname { get; set; }
+
+        [Required]
+        public string Lname { get; set; }
     }
 }

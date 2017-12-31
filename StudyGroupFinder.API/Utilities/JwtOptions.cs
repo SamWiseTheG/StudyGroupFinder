@@ -15,7 +15,7 @@ namespace StudyGroupFinder.API.Utilities
         public int Id { get; set; }           
 		public string Subject { get; set; } = "Default";
         public Dictionary<string, string> PublicClaims = new Dictionary<string, string>();
-        public int ExpiryInMinutes { get; set; } = 1;
+        public int ExpiryInMinutes { get; set; } = 60;
         #endregion
     }
 }

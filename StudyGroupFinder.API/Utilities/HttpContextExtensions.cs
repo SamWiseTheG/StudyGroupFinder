@@ -5,14 +5,19 @@ namespace StudyGroupFinder.API.Utilities
 {
     public static class HttpContextExtensions
     {
-        public static Guid GetUserId(this ClaimsPrincipal claimsPrincipal)
+        public static int GetUserId(this ClaimsPrincipal claimsPrincipal)
         {
-            return Guid.Parse(claimsPrincipal.FindFirstValue("jti"));
+            return int.Parse(claimsPrincipal.FindFirstValue("jti"));
         }
 
         public static string GetUserEmail(this ClaimsPrincipal claimsPrincipal)
         {
             return claimsPrincipal.FindFirstValue("email");
+        }
+
+        public static string GetUserUsername(this ClaimsPrincipal claimsPrincipal)
+        {
+            return claimsPrincipal.FindFirstValue("username");
         }
     }
 }

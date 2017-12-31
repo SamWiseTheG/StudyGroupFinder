@@ -43,7 +43,7 @@ namespace StudyGroupFinder.API.Controllers
             if (request == null || !ModelState.IsValid)
             {
                 HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                response.Message = "Invalid input(s).";
+                response.Message = "Invalid request. Make sure all the fields are filled out.";
                 return response;
             }
 
@@ -69,8 +69,7 @@ namespace StudyGroupFinder.API.Controllers
                         SecretKey = _configuration["JwtSecurity:SecretKey"],
                         PublicClaims = new Dictionary<string, string>()
                         {
-                            { nameof(user.Username).ToLower(), user.Username},
-                            { nameof(user.Email).ToLower(), user.Email},
+                            { nameof(user.Username).ToLower(), user.Username }
                         },
                         Id = createdUser.Id,
                         Subject = "Authorization"
@@ -123,8 +122,7 @@ namespace StudyGroupFinder.API.Controllers
                     SecretKey = _configuration["JwtSecurity:SecretKey"],
                     PublicClaims = new Dictionary<string, string>()
                     {
-                        { nameof(user.Username).ToLower(), user.Username},
-                        { nameof(user.Email).ToLower(), user.Email},
+                        { nameof(user.Username).ToLower(), user.Username }
                     },
                     Id = user.Id,
                     Subject = "Authorization"
@@ -186,7 +184,7 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
-                users = await _usersRepository.GetByUsername(HttpContext.User.GetUserUsername());
+                users = await _usersRepository.GetByUsername(HttpContext.User.GetUsername());
             }
             catch (Exception ex)
             {

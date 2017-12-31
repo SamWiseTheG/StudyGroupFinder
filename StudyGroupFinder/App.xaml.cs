@@ -8,6 +8,7 @@ namespace StudyGroupFinder
     {
         public static bool IsUserLoggedIn { get; set; }
 
+
         public App()
         {
             InitializeComponent();

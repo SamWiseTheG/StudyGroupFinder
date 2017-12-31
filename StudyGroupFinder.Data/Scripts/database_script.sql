@@ -4,7 +4,7 @@ USE StudyGroup;
 
 DROP TABLE IF EXISTS Students;
 CREATE TABLE Students (
-  ID int NOT NULL AUTO_INCREMENT,
+  Id int NOT NULL AUTO_INCREMENT,
   Username varchar(50) NOT NULL,
   Password varchar(50) NOT NULL,
   Email varchar(50) NOT NULL,
@@ -15,44 +15,60 @@ CREATE TABLE Students (
   UNIQUE(Username),
   UNIQUE(Email),
   UNIQUE(Phone),
-  PRIMARY KEY (ID)
+  PRIMARY KEY (Id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS Courses;
 CREATE TABLE Courses (
-  ID int NOT NULL AUTO_INCREMENT,
+  Id int NOT NULL AUTO_INCREMENT,
   Name varchar(50) DEFAULT NULL,
-  PRIMARY KEY (ID)
+  UNIQUE(Name),
+  PRIMARY KEY (Id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS Sections;
 CREATE TABLE Sections (
-  ID int NOT NULL AUTO_INCREMENT,
-  Course_ID int NOT NULL,
+  Id int NOT NULL AUTO_INCREMENT,
+  Course_Id int NOT NULL,
   Section_Name varchar(50) DEFAULT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (Course_ID)
-      REFERENCES Courses (ID)
+  PRIMARY KEY (Id),
+  FOREIGN KEY (Course_Id)
+      REFERENCES Courses (Id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups (
-  ID int NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (ID)
+  Id int NOT NULL AUTO_INCREMENT,
+  Size int NOT NULL DEFAULT 5,
+  Private bit NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (Id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS StudentGroups;
 CREATE TABLE StudentGroups (
-  Student_ID int NOT NULL,
-  Group_ID int NOT NULL,
-  PRIMARY KEY (Student_ID, Group_ID),
-  FOREIGN KEY (Group_ID)
-      REFERENCES Groups(ID),
-  FOREIGN KEY (Student_ID)
-      REFERENCES Students(ID)
+  Student_Id int NOT NULL,
+  Group_Id int NOT NULL,
+  PRIMARY KEY (Student_Id, Group_Id),
+  FOREIGN KEY (Group_Id)
+      REFERENCES Groups(Id),
+  FOREIGN KEY (Student_Id)
+      REFERENCES Students(Id)
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS StudentGroupRequests;
+CREATE TABLE StudentGroupRequests (
+  Inviter_Id int NOT NULL,
+  Student_Id int NOT NULL,
+  Group_Id int NOT NULL,
+  PRIMARY KEY (Student_Id, Group_Id),
+  FOREIGN KEY (Group_Id)
+      REFERENCES Groups(Id),
+  FOREIGN KEY (Student_Id)
+      REFERENCES Students(Id)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

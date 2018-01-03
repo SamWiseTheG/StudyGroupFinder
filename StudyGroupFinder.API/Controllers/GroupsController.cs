@@ -33,7 +33,7 @@ namespace StudyGroupFinder.API.Controllers
         }
 
         #region POST api/groups/create
-        [AllowAnonymous]
+
         [HttpPost("create")]
         public async Task<BaseResponse> Create([FromBody]CreateGroupRequest request)
         {
@@ -59,11 +59,11 @@ namespace StudyGroupFinder.API.Controllers
                 if (await _groupsRepository.Create(group))
                 {
                     var createdGroup = await _groupsRepository.GetByName(group.Name);
-                    if( await _groupsRepository.AddUser(HttpContext.User.GetUserId().ToString(), createdGroup.Id.ToString())) {
-                        
+
+                    if( await _groupsRepository.AddUser(HttpContext.User.GetUserId(), createdGroup. Id)) 
+                    {
                         response.Success = true;
                         response.Message = "Group successfully created!";
-
                     }
                 }
                 else
@@ -73,7 +73,16 @@ namespace StudyGroupFinder.API.Controllers
             }
             catch (Exception ex)
             {
-                await _groupsRepository.Delete(group);
+                try 
+                {
+                    await _groupsRepository.Delete(group);  // If the User addition fails, we need to delete the group we created.
+                }
+                catch {
+                    Console.WriteLine(ex.Message);
+                    HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.Message = "Failed to delete created group.";
+                }
+
                 Console.WriteLine(ex.Message);
                 HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 response.Message = "Failed to create group.";
@@ -91,7 +100,7 @@ namespace StudyGroupFinder.API.Controllers
         #endregion
 
         #region POST api/groups/invite
-        [HttpPost("createinvite")]
+        [HttpPost("invite")]
         public async Task<BaseResponse> Invite([FromBody]GroupInviteRequest request)
         {
             var response = new BaseResponse();
@@ -103,9 +112,28 @@ namespace StudyGroupFinder.API.Controllers
                 return response;
             }
 
+            GroupInvite invite;
+
+            //TODO check to ensure the user inviting is a member of the study group
+
+            try {
+                invite = new GroupInvite
+                {
+                    Group_Id = Int32.Parse(request.Group_Id),
+                    User_Id = Int32.Parse(request.User_Id),
+                    Inviter_Id = Int32.Parse(request.Inviter_Id)
+                };
+            } 
+            catch 
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                response.Message = "Invalid input(s).";
+                return response;
+            }
+
             try
             {
-                if (await _groupsRepository.CreateInvite(request.Group_Id, request.User_Id, request.Inviter_Id))
+                if (await _groupsRepository.CreateInvite(invite))
                 {
                     response.Success = true;
                     response.Message = "User successfully invited to group!";

@@ -5,7 +5,7 @@ namespace StudyGroupFinder.Common.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Boolean Private { get; set; }
+        public bool Private { get; set; }
         public int Size { get; set; }
     }
 }

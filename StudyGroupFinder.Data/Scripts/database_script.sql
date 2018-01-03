@@ -55,8 +55,10 @@ CREATE TABLE StudentGroups (
   PRIMARY KEY (Student_Id, Group_Id),
   FOREIGN KEY (Group_Id)
       REFERENCES Groups(Id),
+      ON DELETE CASCADE,
   FOREIGN KEY (Student_Id)
       REFERENCES Students(Id)
+      ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -67,8 +69,10 @@ CREATE TABLE StudentGroupRequests (
   Group_Id int NOT NULL,
   PRIMARY KEY (Student_Id, Group_Id),
   FOREIGN KEY (Group_Id)
-      REFERENCES Groups(Id),
+      REFERENCES Groups(Id)
+      ON DELETE CASCADE,
   FOREIGN KEY (Student_Id)
       REFERENCES Students(Id)
+      ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

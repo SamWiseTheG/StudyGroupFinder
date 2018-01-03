@@ -23,7 +23,7 @@ namespace StudyGroupFinder.Data.Repositories
             }
         }
 
-        public async Task<bool> CreateRequest(String groupid, String userid)
+        public async Task<bool> CreateRequest(int groupid, int userid)
         {
             using (var conn = await _db.GetSqlConnection())
             {
@@ -32,13 +32,23 @@ namespace StudyGroupFinder.Data.Repositories
             }
         }
 
-        public async Task<bool> CreateInvite(String groupid, String userid, String inviterid)
+        public async Task<bool> CreateInvite(int groupid, int userid, int inviterid)
         {
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.ExecuteAsync(@"
                     INSERT INTO `StudentGroupRequests`(Student_Id, Group_Id, Inviter_Id) VALUES(@userId, @groupId, @inviterId);",
                     new { groupId = groupid, userId = userid, inviterId = inviterid }) > 0;
+            }
+        }
+
+        public async Task<bool> CreateInvite(GroupInvite invite)
+        {
+            using (var conn = await _db.GetSqlConnection())
+            {
+                return await conn.ExecuteAsync(@"
+                    INSERT INTO `StudentGroupRequests`(Student_Id, Group_Id, Inviter_Id) VALUES(@User_Id, @Group_Id, @Inviter_Id);",
+                    invite) > 0;
             }
         }
 
@@ -54,7 +64,7 @@ namespace StudyGroupFinder.Data.Repositories
             }
         }
 
-        public async Task<Group> GetById(Guid id)
+        public async Task<Group> GetById(int id)
         {
             using (var conn = await _db.GetSqlConnection())
             {
@@ -78,15 +88,15 @@ namespace StudyGroupFinder.Data.Repositories
         #region UPDATE
 
         // Remove any pending invites or requests and add the user to the group
-        public async Task<bool> AddUser(String userid, String groupid)
+        public async Task<bool> AddUser(int userid, int groupid)
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                if (await conn.ExecuteAsync(@"DELETE FROM `StudentGroupRequests` WHERE Student_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid }) <= 0)
+                if (await conn.ExecuteAsync("DELETE FROM `StudentGroupRequests` WHERE Student_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid }) <= 0)
                 {
                     return false;
                 }
-                if (await conn.ExecuteAsync(@"INSERT INTO `StudentGroups`(Student_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid }) > 0)
+                if (await conn.ExecuteAsync("INSERT INTO `StudentGroups`(Student_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid }) > 0)
                 {
                     return true;
                 }

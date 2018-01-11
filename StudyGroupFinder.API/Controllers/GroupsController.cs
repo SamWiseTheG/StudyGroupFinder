@@ -115,21 +115,12 @@ namespace StudyGroupFinder.API.Controllers
             GroupInvite invite;
 
             //TODO check to ensure the user inviting is a member of the study group
-
-            try {
-                invite = new GroupInvite
-                {
-                    Group_Id = Int32.Parse(request.Group_Id),
-                    User_Id = Int32.Parse(request.User_Id),
-                    Inviter_Id = Int32.Parse(request.Inviter_Id)
-                };
-            } 
-            catch 
+            invite = new GroupInvite
             {
-                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                response.Message = "Invalid input(s).";
-                return response;
-            }
+                Group_Id = request.Group_Id,
+                User_Id = HttpContext.User.GetUserId(),
+                Inviter_Id = request.Inviter_Id
+            };
 
             try
             {

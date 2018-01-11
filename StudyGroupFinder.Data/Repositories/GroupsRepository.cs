@@ -85,6 +85,8 @@ namespace StudyGroupFinder.Data.Repositories
         }
         #endregion
 
+        // TODO: GET LIKE NAME 
+
         #region UPDATE
 
         // Remove any pending invites or requests and add the user to the group

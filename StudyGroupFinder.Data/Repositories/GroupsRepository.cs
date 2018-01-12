@@ -28,7 +28,7 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.ExecuteAsync(@"
-                    INSERT INTO `StudentGroupRequests`(Student_Id, Group_Id) VALUES (@userId, @groupId);", new { userId = userid, groupId = groupid }) > 0;
+                    INSERT INTO `UserGroupRequests`(User_Id, Group_Id) VALUES (@userId, @groupId);", new { userId = userid, groupId = groupid }) > 0;
             }
         }
 
@@ -37,7 +37,7 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.ExecuteAsync(@"
-                    INSERT INTO `StudentGroupRequests`(Student_Id, Group_Id, Inviter_Id) VALUES(@userId, @groupId, @inviterId);",
+                    INSERT INTO `UserGroupRequests`(User_Id, Group_Id, Inviter_Id) VALUES(@userId, @groupId, @inviterId);",
                     new { groupId = groupid, userId = userid, inviterId = inviterid }) > 0;
             }
         }
@@ -47,7 +47,7 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.ExecuteAsync(@"
-                    INSERT INTO `StudentGroupRequests`(Student_Id, Group_Id, Inviter_Id) VALUES(@User_Id, @Group_Id, @Inviter_Id);",
+                    INSERT INTO `UserGroupRequests`(User_Id, Group_Id, Inviter_Id) VALUES(@User_Id, @Group_Id, @Inviter_Id);",
                     invite) > 0;
             }
         }
@@ -94,11 +94,11 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                if (await conn.ExecuteAsync("DELETE FROM `StudentGroupRequests` WHERE Student_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid }) <= 0)
+                if (await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE User_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid }) <= 0)
                 {
                     return false;
                 }
-                if (await conn.ExecuteAsync("INSERT INTO `StudentGroups`(Student_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid }) > 0)
+                if (await conn.ExecuteAsync("INSERT INTO `UserGroups`(User_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid }) > 0)
                 {
                     return true;
                 }
@@ -114,7 +114,7 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return (await conn.ExecuteAsync(@"DELETE FROM `StudentGroupRequests` WHERE Group_Id = '@Id';", group)) > 0;
+                return (await conn.ExecuteAsync(@"DELETE FROM `UserGroupRequests` WHERE Group_Id = '@Id';", group)) > 0;
             }
         }
 

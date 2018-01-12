@@ -18,7 +18,7 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return (await conn.ExecuteAsync(@"
-                    INSERT INTO `Students`(Username, Password, Email, Fname, Lname)
+                    INSERT INTO `Users`(Username, Password, Email, Fname, Lname)
                     VALUES (@Username, @Password, @Email, @Fname, @Lname);",
                     user)) > 0;
             }
@@ -31,7 +31,7 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.QueryAsync(@"
-                    SELECT * FROM `Students`") as List<User>;
+                    SELECT * FROM `Users`") as List<User>;
             }
         }
 
@@ -40,18 +40,18 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.QuerySingleOrDefaultAsync<User>(@"
-                    SELECT * FROM `Students` WHERE Id = @Id", 
+                    SELECT * FROM `Users` WHERE Id = @Id", 
                     new { Id = id });
             }
         }
 
-        public async Task<User> GetByUsername(string username)
+        public async Task<User> GetByEmail(string email)
         {
             using (var conn = await _db.GetSqlConnection())
             {
                 return await conn.QuerySingleOrDefaultAsync<User>(@"
-                    SELECT * FROM `Students` WHERE Username = @Username",
-                    new { Username = username });
+                    SELECT * FROM `Users` WHERE Email = @Email",
+                    new { Email = email };
             }
         }
         #endregion

@@ -2,17 +2,15 @@ DROP DATABASE IF EXISTS StudyGroup;
 CREATE DATABASE StudyGroup;
 USE StudyGroup;
 
-DROP TABLE IF EXISTS Students;
-CREATE TABLE Students (
+DROP TABLE IF EXISTS Users;
+CREATE TABLE Users (
   Id int NOT NULL AUTO_INCREMENT,
-  Username varchar(50) NOT NULL,
   Password varchar(50) NOT NULL,
   Email varchar(50) NOT NULL,
   Fname varchar(30) NOT NULL,
   Lname varchar(30) NOT NULL,
   Major varchar(30) DEFAULT NULL,
   Phone varchar(11) DEFAULT NULL,
-  UNIQUE(Username),
   UNIQUE(Email),
   UNIQUE(Phone),
   PRIMARY KEY (Id)
@@ -36,6 +34,7 @@ CREATE TABLE Sections (
   PRIMARY KEY (Id),
   FOREIGN KEY (Course_Id)
       REFERENCES Courses (Id)
+      ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -48,31 +47,31 @@ CREATE TABLE Groups (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS StudentGroups;
-CREATE TABLE StudentGroups (
-  Student_Id int NOT NULL,
+DROP TABLE IF EXISTS UserGroups;
+CREATE TABLE UserGroups (
+  User_Id int NOT NULL,
   Group_Id int NOT NULL,
-  PRIMARY KEY (Student_Id, Group_Id),
+  PRIMARY KEY (User_Id, Group_Id),
   FOREIGN KEY (Group_Id)
-      REFERENCES Groups(Id),
+      REFERENCES Groups(Id)
       ON DELETE CASCADE,
-  FOREIGN KEY (Student_Id)
-      REFERENCES Students(Id)
+  FOREIGN KEY (User_Id)
+      REFERENCES Users(Id)
       ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS StudentGroupRequests;
-CREATE TABLE StudentGroupRequests (
+DROP TABLE IF EXISTS UserGroupRequests;
+CREATE TABLE UserGroupRequests (
   Inviter_Id int NOT NULL,
-  Student_Id int NOT NULL,
+  User_Id int NOT NULL,
   Group_Id int NOT NULL,
-  PRIMARY KEY (Student_Id, Group_Id),
+  PRIMARY KEY (User_Id, Group_Id),
   FOREIGN KEY (Group_Id)
       REFERENCES Groups(Id)
       ON DELETE CASCADE,
-  FOREIGN KEY (Student_Id)
-      REFERENCES Students(Id)
+  FOREIGN KEY (User_Id)
+      REFERENCES Users(Id)
       ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

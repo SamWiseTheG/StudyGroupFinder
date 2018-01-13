@@ -51,29 +51,32 @@ namespace StudyGroupFinder.API.Controllers
             try
             {
                 var sha1 = new SHA1CryptoServiceProvider();
-                var hashedString = sha1.ComputeHash(Encoding.ASCII.GetBytes(request.Username.ToLower() + request.Password)).ToString();
+                var hashedString = Encoding.ASCII.GetString(
+                    sha1.ComputeHash(
+                        Encoding.ASCII.GetBytes(request.Email + request.Password)
+                    )
+                );
+                   
 
                 var user = new User
                 {
                     Email = request.Email,
                     Password = hashedString,
-                    Username = request.Username.ToLower(),
                     Fname = request.Fname,
                     Lname = request.Lname
                 };
 
                 if (await _usersRepository.Create(user))
                 {
-                    var createdUser = await _usersRepository.GetByUsername(user.Username);
+                    var createdUser = await _usersRepository.GetByEmail(user.Email);
                     var token = JwtHandler.GenerateToken(new JwtOptions
                     {
                         Issuer = _configuration["JwtSecurity:Issuer"],
                         Audience = _configuration["JwtSecurity:Audience"],
                         SecretKey = _configuration["JwtSecurity:SecretKey"],
-                        PublicClaims = new Dictionary<string, string>()
-                        {
-                            { nameof(user.Username).ToLower(), user.Username }
-                        },
+
+                        // removed the Username.ToLower(), Username entry in the dict.
+                        PublicClaims = new Dictionary<string, string>(),
                         Id = createdUser.Id,
                         Subject = "Authorization"
                     });
@@ -110,10 +113,14 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
-                var user = await _usersRepository.GetByUsername(request.Username.ToLower());
+                var user = await _usersRepository.GetByEmail(request.Email);
 
                 var sha1 = new SHA1CryptoServiceProvider();
-                var hashedString = sha1.ComputeHash(Encoding.ASCII.GetBytes(request.Username.ToLower() + request.Password)).ToString();
+                var hashedString = Encoding.ASCII.GetString(
+                    sha1.ComputeHash(
+                        Encoding.ASCII.GetBytes(request.Email + request.Password)
+                    )
+                );
 
                 if (user == null || hashedString != user.Password)
                 {
@@ -127,10 +134,7 @@ namespace StudyGroupFinder.API.Controllers
                     Issuer = _configuration["JwtSecurity:Issuer"],
                     Audience = _configuration["JwtSecurity:Audience"],
                     SecretKey = _configuration["JwtSecurity:SecretKey"],
-                    PublicClaims = new Dictionary<string, string>()
-                    {
-                        { nameof(user.Username).ToLower(), user.Username }
-                    },
+                    PublicClaims = new Dictionary<string, string>(),
                     Id = user.Id,
                     Subject = "Authorization"
                 });
@@ -191,7 +195,7 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
-                users = await _usersRepository.GetByUsername(HttpContext.User.GetUsername());
+                users = await _usersRepository.GetByEmail(HttpContext.User.GetEmail());
             }
             catch (Exception ex)
             {

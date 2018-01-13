@@ -14,5 +14,10 @@ namespace StudyGroupFinder.API.Utilities
         {
             return claimsPrincipal.FindFirstValue("username");
         }
+
+        public static string GetEmail(this ClaimsPrincipal claimsPrincipal)
+        {
+            return claimsPrincipal.FindFirstValue("email");
+        }
     }
 }

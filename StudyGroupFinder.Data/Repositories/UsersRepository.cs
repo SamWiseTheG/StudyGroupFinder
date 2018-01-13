@@ -18,8 +18,8 @@ namespace StudyGroupFinder.Data.Repositories
             using (var conn = await _db.GetSqlConnection())
             {
                 return (await conn.ExecuteAsync(@"
-                    INSERT INTO `Users`(Username, Password, Email, Fname, Lname)
-                    VALUES (@Username, @Password, @Email, @Fname, @Lname);",
+                    INSERT INTO `Users`(Password, Email, Fname, Lname)
+                    VALUES (@Password, @Email, @Fname, @Lname);",
                     user)) > 0;
             }
         }
@@ -51,9 +51,10 @@ namespace StudyGroupFinder.Data.Repositories
             {
                 return await conn.QuerySingleOrDefaultAsync<User>(@"
                     SELECT * FROM `Users` WHERE Email = @Email",
-                    new { Email = email };
+                    new { Email = email } );
             }
         }
+
         #endregion
     }
 }

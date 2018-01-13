@@ -55,20 +55,24 @@ namespace StudyGroupFinder.API.Controllers
 
             try
             {
+                Group createdGroup = null;
 
                 if (await _groupsRepository.Create(group))
                 {
-                    var createdGroup = await _groupsRepository.GetByName(group.Name);
-
-                    if( await _groupsRepository.AddUser(HttpContext.User.GetUserId(), createdGroup. Id)) 
-                    {
-                        response.Success = true;
-                        response.Message = "Group successfully created!";
-                    }
+                    createdGroup = await _groupsRepository.GetByName(group.Name);
                 }
                 else
                 {
                     throw new Exception();
+                }
+
+                if(createdGroup != null) 
+                {
+                    if(await _groupsRepository.AddUser(HttpContext.User.GetUserId(), createdGroup.Id)) 
+                    {
+                        response.Message = "Group successfully created!";
+                        response.Success = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -103,6 +107,7 @@ namespace StudyGroupFinder.API.Controllers
         [HttpPost("invite")]
         public async Task<BaseResponse> Invite([FromBody]GroupInviteRequest request)
         {
+            var currentUserId = HttpContext.User.GetUserId();
             var response = new BaseResponse();
 
             if (request == null || !ModelState.IsValid)
@@ -112,13 +117,26 @@ namespace StudyGroupFinder.API.Controllers
                 return response;
             }
 
-            GroupInvite invite;
-
-            //TODO check to ensure the user inviting is a member of the study group
-            invite = new GroupInvite
+            try 
+            {
+                if (!await _groupsRepository.UserInGroup(currentUserId, request.Group_Id)) 
+                {
+                    HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    response.Message = "User is not authorized to invite to this group.";
+                    return response;
+                }
+            }
+            catch 
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                response.Message = "Failed to authorize invite rights.";
+                return response;   
+            }
+  
+            var invite = new GroupInvite
             {
                 Group_Id = request.Group_Id,
-                User_Id = HttpContext.User.GetUserId(),
+                User_Id = currentUserId,
                 Inviter_Id = request.Inviter_Id
             };
 

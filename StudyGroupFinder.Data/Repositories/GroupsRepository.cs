@@ -83,9 +83,25 @@ namespace StudyGroupFinder.Data.Repositories
                     new { Name = name });
             }
         }
-        #endregion
 
-        // TODO: GET LIKE NAME 
+        public async Task<List<Group>> GetByNameLike(string name) {
+            using (var conn = await _db.GetSqlConnection())
+            {
+                return await conn.QueryAsync("SELECT * FROM `Groups` WHERE Name LIKE '%@Name%", new { Name = name }) as List<Group>;
+            }
+        }
+
+        public async Task<bool> UserInGroup(int userid, int groupid) 
+        {
+            using (var conn = await _db.GetSqlConnection())
+            {
+                return await conn.ExecuteAsync(@"
+                    SELECT User_Id FROM `UserGroups` WHERE User_Id = @userid AND Group_Id = @groupid",
+                    new { User_Id = userid }) > 0;
+            }
+        }
+
+        #endregion
 
         #region UPDATE
 
@@ -94,14 +110,13 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                if (await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE User_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid }) <= 0)
-                {
-                    return false;
-                }
-                if (await conn.ExecuteAsync("INSERT INTO `UserGroups`(User_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid }) > 0)
+                await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE User_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid, groupId = groupid });
+              
+                if (await conn.ExecuteAsync("INSERT INTO `UserGroups`(User_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid, groupId = groupid}) > 0)
                 {
                     return true;
                 }
+
                 return false;
             }
         }

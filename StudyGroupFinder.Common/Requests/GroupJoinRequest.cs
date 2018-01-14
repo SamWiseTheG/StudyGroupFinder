@@ -4,14 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StudyGroupFinder.Common.Requests
 {
-    public class GroupCreateRequest
+    public class GroupJoinRequest
     {
+        
         [Required]
-        public string Name { get; set; }
-
-        public bool Private { get; set; }
-
-        public int Size { get; set; }
+        public int Group_Id { get; set; }
 
     }
 }

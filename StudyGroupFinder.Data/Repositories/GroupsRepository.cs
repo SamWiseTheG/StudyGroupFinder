@@ -87,7 +87,7 @@ namespace StudyGroupFinder.Data.Repositories
         public async Task<List<Group>> GetByNameLike(string name) {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.QueryAsync("SELECT * FROM `Groups` WHERE Name LIKE '%@Name%", new { Name = name }) as List<Group>;
+                return await conn.QueryAsync("SELECT * FROM `Groups` WHERE Name LIKE '%@Name%'", new { Name = name }) as List<Group>;
             }
         }
 
@@ -95,9 +95,19 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.ExecuteAsync(@"
-                    SELECT User_Id FROM `UserGroups` WHERE User_Id = @userid AND Group_Id = @groupid",
+                return await conn.ExecuteAsync("SELECT User_Id FROM `UserGroups` WHERE User_Id = @userid AND Group_Id = @groupid",
                     new { User_Id = userid }) > 0;
+            }
+        }
+
+        public async Task<List<User>> GetUsersInGroup(int groupid)
+        {
+            using (var conn = await _db.GetSqlConnection())
+            {
+                return await conn.QueryAsync<User>(@"
+                SELECT * FROM Users WHERE Id IN (SELECT User_Id FROM UserGroups WHERE Group_Id = @groupId)",
+                new { groupId = groupid }) as List<User>;
+
             }
         }
 
@@ -110,7 +120,7 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE User_Id = '@userId' AND Group_Id = '@groupId';", new { userId = userid, groupId = groupid });
+                await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE User_Id = '@userId' AND Group_Id = '@groupId';",new { userId = userid, groupId = groupid });
               
                 if (await conn.ExecuteAsync("INSERT INTO `UserGroups`(User_Id, Group_Id) VALUES(@userId, @groupId);", new { userId = userid, groupId = groupid}) > 0)
                 {
@@ -129,7 +139,7 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return (await conn.ExecuteAsync(@"DELETE FROM `UserGroupRequests` WHERE Group_Id = '@Id';", group)) > 0;
+                return (await conn.ExecuteAsync("DELETE FROM `UserGroupRequests` WHERE Group_Id = '@Id';", group)) > 0;
             }
         }
 

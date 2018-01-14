@@ -35,7 +35,7 @@ namespace StudyGroupFinder.API.Controllers
         #region POST api/groups/create
 
         [HttpPost("create")]
-        public async Task<BaseResponse> Create([FromBody]CreateGroupRequest request)
+        public async Task<BaseResponse> Create([FromBody]GroupCreateRequest request)
         {
             var response = new BaseResponse();
 
@@ -97,10 +97,55 @@ namespace StudyGroupFinder.API.Controllers
 
         #endregion
 
-        #region GET api/groups
-        #endregion
+        #region POST api/groups/join
+        [HttpPost("join")]
+        public async Task<BaseResponse> Join([FromBody]GroupJoinRequest request)
+        {
+            var response = new BaseResponse();
 
-        #region POST api/groups/request
+            if (request == null || !ModelState.IsValid)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                response.Message = "Invalid input(s).";
+                return response;
+            }
+
+            try
+            {
+                var targetGroup = await _groupsRepository.GetById(request.Group_Id);
+                var usersInGroup = await _groupsRepository.GetUsersInGroup(request.Group_Id);
+
+                if(usersInGroup.Count() < targetGroup.Size) {
+                    if (targetGroup.Private)
+                    {
+                        // TODO: handle checking for invite
+                    }
+
+                    else
+                    {
+                        if (await _groupsRepository.AddUser(HttpContext.User.GetUserId(), request.Group_Id))
+                        {
+                            response.Message = "Successfully joined group!";
+                            response.Success = true;
+                        }
+                    }  
+                }
+
+                else 
+                {
+                    response.Message = "Join unsuccessful.  Group is full.";
+                    response.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                response.Message = "Failed to join group.";
+            }
+
+            return response;
+        }
         #endregion
 
         #region POST api/groups/invite
@@ -163,6 +208,11 @@ namespace StudyGroupFinder.API.Controllers
         }
         #endregion
 
+        #region GET api/groups
+        #endregion
+
+        #region POST api/groups/request
+        #endregion
 
     }
 }

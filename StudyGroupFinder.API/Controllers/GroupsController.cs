@@ -209,6 +209,24 @@ namespace StudyGroupFinder.API.Controllers
         #endregion
 
         #region GET api/groups
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<List<Group>> Search([FromQuery]GroupSearchRequest request)
+        {
+            var groups = (List<Group>)null;
+
+            try
+            {
+                groups = await _groupsRepository.GetByNameLike(request.Name);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            }
+
+            return groups;
+        }
         #endregion
 
         #region POST api/groups/request

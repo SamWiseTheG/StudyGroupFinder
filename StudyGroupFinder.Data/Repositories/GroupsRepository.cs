@@ -59,7 +59,7 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.QueryAsync(@"
+                return await conn.QueryAsync<Group>(@"
                     SELECT * FROM `Groups`") as List<Group>;
             }
         }
@@ -87,7 +87,8 @@ namespace StudyGroupFinder.Data.Repositories
         public async Task<List<Group>> GetByNameLike(string name) {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.QueryAsync("SELECT * FROM `Groups` WHERE Name LIKE '%@Name%'", new { Name = name }) as List<Group>;
+                var sqlQuery = "SELECT * FROM `Groups` WHERE Name LIKE '%" + name + "%'";
+                return await conn.QueryAsync<Group>(sqlQuery) as List<Group>;
             }
         }
 
@@ -95,8 +96,8 @@ namespace StudyGroupFinder.Data.Repositories
         {
             using (var conn = await _db.GetSqlConnection())
             {
-                return await conn.ExecuteAsync("SELECT User_Id FROM `UserGroups` WHERE User_Id = @userid AND Group_Id = @groupid",
-                    new { User_Id = userid }) > 0;
+                return await conn.ExecuteAsync("SELECT User_Id FROM `UserGroups` WHERE User_Id = @userId AND Group_Id = @groupId",
+                    new { userId = userid, groupId = groupid }) > 0;
             }
         }
 
